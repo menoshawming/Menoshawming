@@ -254,7 +254,7 @@ document.getElementById('whatsapp-btn').onclick = () => {
 
     const message = `أريد شحن رصيد في متجر مِنيو.%0Aالـ ID الخاص بي هو: ${userId}`;
 
-    const whatsappNumber = "201552577467";
+    const whatsappNumber = "201113318419";
 
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
 
