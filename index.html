@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Menoshawming</title>
+    <link rel="stylesheet" href="./style.css">
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MENO STORE | الإصدار الذكي</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <div id="viewer-overlay">
+
+        <div id="viewer-header">
+
+            <span id="viewer-title">عرض المادة</span>
+
+            <button id="close-viewer-btn">إغلاق X</button>
+
+        </div>
+
+        <iframe id="viewer-frame" src="" oncontextmenu="return false;"></iframe>
+
+    </div>
+
+    <div id="auth-screen">
+
+        <div class="auth-box">
+
+            <h1 style="color:var(--primary)">M_SHAWMING</h1>
+
+            <input type="email" id="login-email" placeholder="البريد الإلكتروني">
+
+            <input type="password" id="login-pass" placeholder="كلمة المرور">
+
+            <button class="btn btn-primary" id="login-btn">تسجيل الدخول</button>
+
+            <button class="btn btn-secondary-outline" id="signup-btn">إنشاء حساب جديد</button>
+
+        </div>
+
+    </div>
+
+    <div id="main-ui">
+
+        <div class="navbar">
+
+            <div class="logo">MENO STORE</div>
+
+            <button id="logout-btn" class="logout-btn">خروج</button>
+
+        </div>
+
+        <div class="container">
+
+            <div id="admin-panel">
+
+                <h3>🛠 لوحة الإدارة</h3>
+
+                <div class="admin-grid">
+
+                    <div class="admin-section">
+
+                        <input type="text" id="adm-u-uid" placeholder="UID الطالب">
+
+                        <input type="number" id="adm-u-amt" placeholder="المبلغ">
+
+                        <button class="btn btn-success" id="charge-btn">شحن رصيد ✅</button>
+
+                    </div>
+
+                    <div class="admin-section">
+
+                        <input type="text" id="p-name" placeholder="اسم المادة">
+
+                        <input type="number" id="p-price" placeholder="السعر">
+
+                        <input type="text" id="p-link" placeholder="رابط الملف (Google Drive)">
+
+                        <button class="btn btn-purple" id="add-product-btn">نشر للعرض فقط 🚀</button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="stats-grid">
+
+                <div class="stat-card"> رصيدك: <h2 id="u-bal">0 LE</h2> </div>
+
+                <div class="stat-card"> ID الخاص بك: <div id="u-id">...</div> </div>
+
+            </div>
+
+            <button class="btn btn-whatsapp" id="whatsapp-btn">شحن حسابي (واتساب) 💬</button>
+
+            <div id="products-list" class="product-grid"></div>
+
+            
+
+            <footer class="footer-note">
+
+                <hr>قريبا سيتوفر خدمات وامتحنات مجانيه
+
+            </footer>
+
+        </div>
+
+    </div>
+
+    <script type="module" src="script.js"></script>
+
+</body>
+
+</html>
+    <script type="module" src="./script.js"></script>
+
+  </body>
+  
+</html>
