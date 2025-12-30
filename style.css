@@ -10,8 +10,6 @@
 
     --text: #fff; 
 
-    --success: #238636;
-
 }
 
 body { 
@@ -20,7 +18,7 @@ body {
 
     color: var(--text); 
 
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    font-family: 'Segoe UI', sans-serif; 
 
     margin: 0; 
 
@@ -30,7 +28,47 @@ body {
 
 }
 
-/* Auth Screen */
+/* النافذة المنبثقة */
+
+.modal { 
+
+    position: fixed; 
+
+    inset: 0; 
+
+    background: rgba(0,0,0,0.9); 
+
+    z-index: 3000; 
+
+    display: none; 
+
+    align-items: center; 
+
+    justify-content: center; 
+
+    backdrop-filter: blur(8px); 
+
+    padding: 20px; 
+
+}
+
+.modal-content { 
+
+    background: var(--card); 
+
+    padding: 25px; 
+
+    border-radius: 20px; 
+
+    width: 100%; 
+
+    max-width: 400px; 
+
+    border: 2px solid var(--primary); 
+
+    text-align: center; 
+
+}
 
 #auth-screen { 
 
@@ -68,8 +106,6 @@ body {
 
 }
 
-/* Layout */
-
 #main-ui { display: none; }
 
 .navbar { 
@@ -88,21 +124,79 @@ body {
 
 }
 
-.logo { font-weight: bold; color: var(--primary); font-size: 1.2rem; }
+.container { 
 
-.container { padding: 20px; max-width: 1200px; margin: auto; }
+    padding: 20px; 
 
-/* Stats */
+    max-width: 1200px; 
 
-.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+    margin: auto; 
 
-.stat-card { background: var(--card); padding: 15px; border-radius: 15px; text-align: center; border: 1px solid #333; }
+}
 
-#u-bal { color: var(--success); margin: 5px 0; }
+.welcome-banner { 
 
-#u-id { font-size: 10px; color: var(--secondary); word-break: break-all; }
+    background: linear-gradient(45deg, #161b22, #2c0b05); 
 
-/* Buttons & Inputs */
+    padding: 30px; 
+
+    border-radius: 20px; 
+
+    border: 1px solid var(--primary); 
+
+    text-align: center; 
+
+    margin-bottom: 25px; 
+
+}
+
+.stats-grid { 
+
+    display: grid; 
+
+    grid-template-columns: 1fr 1fr; 
+
+    gap: 15px; 
+
+    margin-bottom: 20px; 
+
+}
+
+.stat-card { 
+
+    background: var(--card); 
+
+    padding: 15px; 
+
+    border-radius: 15px; 
+
+    text-align: center; 
+
+    border: 1px solid #333; 
+
+}
+
+.product-grid { 
+
+    display: grid; 
+
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+
+    gap: 20px; 
+
+}
+
+.product-card { 
+
+    background: var(--card); 
+
+    padding: 20px; 
+
+    border-radius: 15px; 
+
+    border: 1px solid #333; 
+
+}
 
 .btn { 
 
@@ -128,19 +222,7 @@ body {
 
 .btn:active { transform: scale(0.98); }
 
-.btn-primary { background: var(--primary); color: #fff; }
-
-.btn-secondary-outline { background: #21262d; color: #58a6ff; }
-
-.btn-success { background: var(--success); color: white; }
-
-.btn-purple { background: var(--secondary); color: white; }
-
-.btn-whatsapp { background: #25D366; color: white; margin-bottom: 20px; }
-
-.btn-delete { background: red; color: white; font-size: 10px; }
-
-input { 
+input, select { 
 
     width: 100%; 
 
@@ -158,9 +240,9 @@ input {
 
     box-sizing: border-box; 
 
-}
+    text-align: center; 
 
-/* Admin Panel */
+}
 
 #admin-panel { 
 
@@ -178,24 +260,44 @@ input {
 
 }
 
-.admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+#viewer-overlay { 
 
-/* Products */
+    position: fixed; 
 
-.product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    inset: 0; 
 
-.product-card { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid #333; }
+    background: rgba(0,0,0,0.95); 
 
-/* Viewer Overlay */
+    z-index: 2000; 
 
-#viewer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; display: none; flex-direction: column; }
+    display: none; 
 
-#viewer-header { padding: 15px; background: #000; display: flex; justify-content: space-between; align-items: center; }
+    flex-direction: column; 
 
-#viewer-frame { flex-grow: 1; border: none; width: 100%; height: 100%; }
+}
 
-#close-viewer-btn { background: red; color: white; border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; }
+#viewer-header { 
 
-.logout-btn { border: 1px solid red; color: red; background: none; cursor: pointer; padding: 5px 12px; border-radius: 5px; }
+    padding: 15px; 
 
-.footer-note { text-align: center; margin-top: 30px; color: #888; }
+    background: #000; 
+
+    display: flex; 
+
+    justify-content: space-between; 
+
+    align-items: center; 
+
+}
+
+#viewer-frame { 
+
+    flex-grow: 1; 
+
+    border: none; 
+
+    width: 100%; 
+
+    height: 100%; 
+
+}
