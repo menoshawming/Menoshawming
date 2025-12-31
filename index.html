@@ -3,202 +3,143 @@
 
   <head>
     <meta charset="UTF-8">
-    <title>MENOSHAWMING</title>
+    <title>MENO shawming 1.2</title>
     <link rel="stylesheet" href="./style.css">
 
   </head>
     
   <body>
   <!DOCTYPE html>
-
 <html lang="ar" dir="rtl">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>MENO STORE | الإصدار الذكي</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MENO STORE | الإصدار الاحترافي</title>
     <link rel="stylesheet" href="style.css">
-
 </head>
-
 <body>
 
-    <div id="benefits-modal" class="modal">
-
-        <div class="modal-content">
-
-            <h2 style="color:var(--secondary)">المميزات والمقابل 🎁</h2>
-
-            <p style="text-align:right; line-height:1.6;">
-
-                ✅ تأخذ امتحاناتك حسب سنك الدراسي مجاناً.<br>
-
-                ✅ يكون لك نسبة في الأرباح عند البيع.<br>
-
-                ✅ كلما بعت أكثر.. كانت نسبتك أكبر.. وأموالك أكثر!
-
-            </p>
-
-            <button class="btn" style="background:var(--secondary); color:white" onclick="closeModal('benefits-modal')">فهمت، أريد التقديم</button>
-
+    <div id="guide-modal" class="modal">
+        <div class="modal-content" style="border-color: var(--gold);">
+            <h2 style="color:var(--gold); margin-top:0;">دليلك في MENO STORE 🔥</h2>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <b>🛒 تسريبات حصرية</b>
+                    <span>احصل على امتحاناتك وموادك بصيغة (صورة / صوت / روابط) فور نشرها.</span>
+                </div>
+                <div class="feature-item">
+                    <b>🛡️ نظام الحماية SOS</b>
+                    <span>اضغط الزر الأحمر الصغير بالأسفل ليتحول التطبيق فوراً لموقع تعليمي "مُزيف" لحمايتك.</span>
+                </div>
+                <div class="feature-item">
+                    <b>💬 دردشة سرية</b>
+                    <span>تواصل مع زملائك في شات جماعي مُشفر لمناقشة المواد.</span>
+                </div>
+                <div class="feature-item">
+                    <b>💰 الربح من التوزيع</b>
+                    <span>اضغط "اعمل معنا" لتنضم لفريقنا وتربح عمولة كاش مقابل كل طالب يشحن من خلالك.</span>
+                </div>
+            </div>
+            <button class="btn" style="background:var(--gold); color:black; font-size: 16px;" onclick="closeModal('guide-modal')">🤫 فهمت.. دخول عالم الكبار 🚀</button>
         </div>
-
     </div>
 
     <div id="work-modal" class="modal">
-
         <div class="modal-content">
-
-            <h2 style="color:var(--primary)">انضم لفريقنا 💼</h2>
-
-            <button class="btn" style="background:none; color:var(--secondary); text-decoration:underline;" onclick="openModal('benefits-modal')">ما المقابل؟ 🤔</button>
-
-            <input type="text" id="w-school" placeholder="اسم المدرسة">
-
-            <input type="text" id="w-address" placeholder="عنوان المدرسة">
-
-            <input type="text" id="w-admin" placeholder="إدارة تعليمية">
-
-            <input type="tel" id="w-phone" placeholder="رقم التواصل">
-
+            <h2 style="color:var(--primary); margin-top:0;">انضم لجيش التوزيع 💼</h2>
+            <div style="background: rgba(255, 75, 43, 0.1); padding: 15px; border-radius: 15px; margin-bottom: 15px; font-size: 14px; line-height: 1.6; border: 1px solid var(--primary);">
+                <b style="color: var(--gold);">ما المقابل؟</b><br>
+                💰 <b>عمولة ضخمة:</b> نسبة من كل عملية بيع تتم من خلالك.<br>
+                📉 <b>تخفيضات:</b> احصل على امتحاناتك بأسعار خاصة جداً.<br>
+                📈 <b>سلم وظيفي:</b> كل ما مبيعاتك تزيد، رتبتك ونسبتك بتزيد!<br>
+                💵 <b>كاش:</b> اسحب أرباحك رصيد أو فودافون كاش.
+            </div>
+            <input type="text" id="w-school" placeholder="اسم مدرستك">
+            <input type="tel" id="w-phone" placeholder="رقم واتسابك">
             <select id="w-grade">
-
-                <option value="">اختر الصف الدراسي</option>
-
-                <option value="تالتة إعدادي">الصف الثالث الاعدادي</option>
-
-                <option value="أولى ثانوي">الأول الثانوي</option>
-
-                <option value="تانية ثانوي">التاني الثانوي</option>
-
-                <option value="تالتة ثانوي">الثالث الثانوي</option>
-
-                <option value="أكبر">أكبر من ذلك</option>
-
+                <option value="تالتة إعدادي">تالتة إعدادي</option>
+                <option value="ثانوية عامة">ثانوية عامة</option>
             </select>
-
-            <button class="btn" style="background:var(--primary); color:white" onclick="submitWork()">إرسال الطلب 🚀</button>
-
-            <button class="btn" style="background:#333; color:white" onclick="closeModal('work-modal')">إغلاق</button>
-
+            <button class="btn" style="background:var(--primary); color:white" onclick="submitWork()">تقديم طلب الانضمام</button>
+            <button class="btn" onclick="closeModal('work-modal')" style="background:transparent; color:#888;">إغلاق</button>
         </div>
-
     </div>
 
-    <div id="viewer-overlay">
-
-        <div id="viewer-header">
-
-            <span id="viewer-title">عرض المادة</span>
-
-            <button onclick="closeViewer()" style="background:red; color:white; border:none; padding:5px 15px; border-radius:5px; cursor:pointer;">إغلاق X</button>
-
+    <div id="sos-screen">
+        <input type="password" id="sos-unlock" placeholder="بحث في المراجع التعليمية..." style="width:100%; padding:15px; border:1px solid #ddd; border-radius:25px; color:#000; background:#f9f9f9;">
+        <button onclick="checkUnlock()" style="width:100%; background:#f1f3f4; border:none; padding:10px; margin-top:5px; border-radius:8px;">تحديث النتائج</button>
+        <div style="margin-top:20px; border-top: 1px solid #eee; padding-top: 20px;">
+            <h2 id="fake-title">تحميل...</h2>
+            <p id="fake-body">جاري الاتصال بقاعدة البيانات التعليمية...</p>
         </div>
-
-        <iframe id="viewer-frame" src="" oncontextmenu="return false;"></iframe>
-
     </div>
 
     <div id="auth-screen">
-
         <div class="auth-box">
-
             <h1 style="color:var(--primary)">M_SHAWMING</h1>
-
             <input type="email" id="login-email" placeholder="البريد الإلكتروني">
-
             <input type="password" id="login-pass" placeholder="كلمة المرور">
-
-            <button class="btn" style="background:var(--primary); color:#fff" onclick="handleAuth('login')">تسجيل الدخول</button>
-
-            <button class="btn" style="background:#21262d; color:#58a6ff;" onclick="handleAuth('signup')">إنشاء حساب جديد</button>
-
+            <button class="btn" style="background:var(--primary); color:#fff" onclick="handleAuth('login')">دخول</button>
+            <p style="font-size:12px; color:#888; cursor:pointer; margin-top:15px;" onclick="showSignup()">إنشاء حساب جديد</p>
         </div>
+    </div>
 
+    <div id="signup-screen" style="display:none;">
+        <div class="auth-box">
+            <h1 style="color:var(--secondary)">عضوية جديدة</h1>
+            <input type="text" id="user-nick" placeholder="الاسم المستعار للشات">
+            <input type="password" id="user-sos" placeholder="كود SOS (لإلغاء وضع التمويه)">
+            <input type="email" id="reg-email" placeholder="البريد الإلكتروني">
+            <input type="password" id="reg-pass" placeholder="كلمة المرور">
+            <button class="btn" style="background:var(--secondary); color:#fff" onclick="handleAuth('signup')">تأكيد التسجيل</button>
+            <p style="font-size:12px; color:#888; cursor:pointer; margin-top:15px;" onclick="showLogin()">سجل دخول</p>
+        </div>
+    </div>
+
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <h2 style="color:var(--secondary)">إعدادات الحساب ⚙️</h2>
+            <input type="text" id="set-name" placeholder="تغيير الاسم">
+            <input type="text" id="set-sos" placeholder="تغيير كود SOS">
+            <button class="btn" style="background:var(--secondary); color:white" onclick="updateProfile()">حفظ التعديلات</button>
+            <button class="btn" onclick="closeModal('settings-modal')">إلغاء</button>
+        </div>
     </div>
 
     <div id="main-ui">
-
         <div class="navbar">
-
-            <div style="font-weight:bold; color: var(--primary);">MENO STORE</div>
-
-            <button onclick="logout()" style="border:1px solid red; color:red; background:none; cursor:pointer; padding:5px 12px; border-radius:5px;">خروج</button>
-
+            <button onclick="openModal('settings-modal')" style="background:none; border:none; font-size:22px; cursor:pointer;">⚙️</button>
+            <div style="font-weight:bold; color: var(--primary); letter-spacing: 1px;">MENO STORE</div>
+            <div id="u-bal" style="color:var(--accent); font-weight:bold; background: #000; padding: 4px 10px; border-radius: 10px; border: 1px solid #333;">0 LE</div>
         </div>
 
         <div class="container">
-
             <div class="welcome-banner">
-
-                <h2 style="margin:0;">أهلاً بك في المنطقة المحظورة</h2>
-
-                <button class="btn" style="background:#fff; color:#000; width:auto; padding:8px 25px; margin-top:15px; border-radius:50px;" onclick="openModal('work-modal')">اعمل معنا 💼</button>
-
-            </div>
-
-            <div id="admin-panel">
-
-                <h3 style="color:var(--secondary); margin-top:0;">🛠 لوحة الإدارة</h3>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-
-                    <div>
-
-                        <input type="text" id="adm-u-uid" placeholder="UID الطالب">
-
-                        <input type="number" id="adm-u-amt" placeholder="المبلغ">
-
-                        <button class="btn" style="background:#238636; color:white" onclick="adminCharge()">شحن رصيد ✅</button>
-
-                    </div>
-
-                    <div>
-
-                        <input type="text" id="p-name" placeholder="اسم المادة">
-
-                        <input type="number" id="p-price" placeholder="السعر">
-
-                        <input type="text" id="p-link" placeholder="رابط الملف">
-
-                        <button class="btn" style="background:var(--secondary); color:white" onclick="adminAddProduct()">نشر 🚀</button>
-
-                    </div>
-
+                <h3 id="welcome-msg" style="margin:0">مرحباً بك</h3>
+                <div style="display:flex; gap:10px; justify-content:center; margin-top:15px;">
+                    <button class="btn" style="background:var(--accent); color:white; width:auto; padding:6px 18px;" onclick="contactWhatsApp()">شحن رصيد 💰</button>
+                    <button class="btn" style="background:#fff; color:#000; width:auto; padding:6px 18px;" onclick="openModal('work-modal')">اعمل معنا 💼</button>
                 </div>
-
-                <hr style="border:0.5px solid #333; margin:20px 0;">
-
-                <div id="requests-list"></div>
-
             </div>
 
-            <div class="stats-grid">
-
-                <div class="stat-card"> رصيدك: <h2 id="u-bal" style="color:#238636;">0 LE</h2> </div>
-
-                <div class="stat-card"> ID الخاص بك: <div id="u-id" style="font-size:10px; color:var(--secondary);">...</div> </div>
-
+            <h4 style="margin-bottom: 10px; color: #888;">💬 الدردشة الجماعية</h4>
+            <div id="chat-section">
+                <div id="chat-msgs"></div>
+                <div style="display:flex; padding:10px; gap:8px; background:#161b22;">
+                    <input type="text" id="chat-in" placeholder="اكتب رسالة..." style="margin:0; flex:1; text-align: right;">
+                    <button onclick="sendMsg()" style="background:var(--accent); color:white; border:none; padding:0 15px; border-radius:8px;">ارسل</button>
+                </div>
             </div>
 
-            <button class="btn" style="background:#25D366; color:white; margin-bottom:20px;" onclick="contactWhatsApp()">شحن حسابي (واتساب) 💬</button>
-
-            <div id="products-list" class="product-grid"></div>
-
+            <h4 style="margin-bottom: 10px; color: #888;">🛒 التسريبات والمواد</h4>
+            <div id="products-list"></div>
         </div>
-
     </div>
 
-    <hr>قريبا سيضاف امتحانات مجانية<hr>
+    <button class="btn-panic" onclick="activateSOS()">SOS</button>
 
     <script type="module" src="script.js"></script>
-
 </body>
-
 </html>
     <script type="module" src="./script.js"></script>
 

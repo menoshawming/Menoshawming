@@ -1,267 +1,177 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-
-import { getDatabase, ref, set, get, update, increment, onValue, remove, push } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+import { getDatabase, ref, set, get, update, increment, onValue, push, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
 
 // إعدادات Firebase
-
 const firebaseConfig = {
-
     apiKey: "AIzaSyBgd5MkjrAOTtt-hhmuGVCh26klzEMB1ag",
-
     authDomain: "menoshawming-cb8a2.firebaseapp.com",
-
     databaseURL: "https://menoshawming-cb8a2-default-rtdb.firebaseio.com",
-
     projectId: "menoshawming-cb8a2",
-
     appId: "1:558599729266:web:f8a7799809ebf92eb292eb"
-
 };
 
 const app = initializeApp(firebaseConfig);
-
 const auth = getAuth(app);
-
 const db = getDatabase(app);
 
-const ADMIN_ID = "jwrC3vw807avqiAW80mIJaxGnWb2"; 
+let userLocal = null;
 
-// مراقبة حالة المستخدم
-
-onAuthStateChanged(auth, async (user) => {
-
+// مراقبة حالة تسجيل الدخول
+onAuthStateChanged(auth, (user) => {
     if (user) {
-
-        document.getElementById('auth-screen').style.display = 'none';
-
+        hideAllAuth();
         document.getElementById('main-ui').style.display = 'block';
-
-        document.getElementById('u-id').innerText = user.uid;
-
-        document.getElementById('admin-panel').style.display = (user.uid === ADMIN_ID) ? 'block' : 'none';
-
-        if(user.uid === ADMIN_ID) loadRequests();
+        
+        if(!sessionStorage.getItem('guided')) {
+            openModal('guide-modal');
+            sessionStorage.setItem('guided', 'true');
+        }
 
         onValue(ref(db, 'users/' + user.uid), (s) => {
-
-            if(s.exists()) document.getElementById('u-bal').innerText = (s.val().balance || 0).toFixed(2) + " LE";
-
+            userLocal = s.val();
+            if(userLocal) {
+                document.getElementById('u-bal').innerText = (userLocal.balance || 0).toFixed(2) + " LE";
+                document.getElementById('welcome-msg').innerText = "أهلاً، " + (userLocal.name || "عضو جديد");
+                document.getElementById('set-name').value = userLocal.name || "";
+                document.getElementById('set-sos').value = userLocal.sosCode || "";
+            }
         });
-
-        loadItems(user.uid);
-
+        loadItems(); loadChat(); loadSOS();
     } else {
-
-        document.getElementById('auth-screen').style.display = 'flex';
-
+        showLogin();
         document.getElementById('main-ui').style.display = 'none';
-
     }
-
 });
 
-// وظائف النافذة المنبثقة
-
+// وظائف الواجهة
+window.showSignup = () => { hideAllAuth(); document.getElementById('signup-screen').style.display='flex'; }
+window.showLogin = () => { hideAllAuth(); document.getElementById('auth-screen').style.display='flex'; }
+function hideAllAuth() { 
+    document.getElementById('auth-screen').style.display='none'; 
+    document.getElementById('signup-screen').style.display='none'; 
+}
 window.openModal = (id) => document.getElementById(id).style.display = 'flex';
-
 window.closeModal = (id) => document.getElementById(id).style.display = 'none';
 
-// تقديم طلب عمل
-
-window.submitWork = async () => {
-
-    const data = {
-
-        school: document.getElementById('w-school').value,
-
-        address: document.getElementById('w-address').value,
-
-        admin: document.getElementById('w-admin').value,
-
-        phone: document.getElementById('w-phone').value,
-
-        grade: document.getElementById('w-grade').value,
-
-        uid: auth.currentUser.uid
-
-    };
-
-    if(!data.school || !data.phone) return alert("املاً البيانات");
-
-    await push(ref(db, 'work_requests'), data);
-
-    alert("تم إرسال طلبك بنجاح!");
-
-    closeModal('work-modal');
-
-};
-
-// تحميل طلبات العمل للمسؤول
-
-function loadRequests() {
-
-    onValue(ref(db, 'work_requests'), (snap) => {
-
-        let h = '<h4>طلبات العمل:</h4>';
-
-        snap.forEach(c => {
-
-            const r = c.val();
-
-            h += `<div style="background:#000; padding:10px; margin-bottom:5px; font-size:12px;">
-
-                ${r.school} - ${r.grade} - ${r.phone} <br> UID: ${r.uid}
-
-                <button onclick="delReq('${c.key}')" style="color:red; background:none; border:none; cursor:pointer;">حذف</button>
-
-            </div>`;
-
-        });
-
-        document.getElementById('requests-list').innerHTML = h;
-
+// تحديث الملف الشخصي
+window.updateProfile = async () => {
+    await update(ref(db, 'users/' + auth.currentUser.uid), { 
+        name: document.getElementById('set-name').value, 
+        sosCode: document.getElementById('set-sos').value 
     });
-
-}
-
-window.delReq = (k) => remove(ref(db, 'work_requests/' + k));
-
-// تواصل واتساب
-
-window.contactWhatsApp = () => {
-
-    const userId = auth.currentUser ? auth.currentUser.uid : "غير معروف";
-
-    window.open(`https://wa.me/201552577467?text=ID: ${userId}`, '_blank');
-
+    alert("تم التحديث ✅");
+    closeModal('settings-modal');
 };
 
-// إضافة منتج جديد (أدمن)
+// شحن الرصيد
+window.contactWhatsApp = () => {
+    window.open(`https://wa.me/201200756998?text=اريد شحن حسابي ID:${auth.currentUser.uid}`, '_blank');
+};
 
-window.adminAddProduct = async () => {
-
-    const name = document.getElementById('p-name').value;
-
-    const price = parseFloat(document.getElementById('p-price').value);
-
-    const link = document.getElementById('p-link').value;
-
-    await set(ref(db, 'products/' + Date.now()), { name, price, link });
-
-    alert("تم النشر!");
-
+// طلب عمل
+window.submitWork = async () => {
+    const data = {
+        school: document.getElementById('w-school').value,
+        phone: document.getElementById('w-phone').value,
+        grade: document.getElementById('w-grade').value,
+        name: userLocal.name,
+        uid: auth.currentUser.uid,
+        status: "Pending"
+    };
+    if(!data.school || !data.phone) return alert("اكمل البيانات يا بطل!");
+    await push(ref(db, 'work_requests'), data);
+    alert("طلبك وصل للمشرفين، انتظر مكالمة العظمة!");
+    closeModal('work-modal');
 };
 
 // تحميل المنتجات
-
-function loadItems(uid) {
-
-    onValue(ref(db, 'products'), async (snap) => {
-
-        const uSnap = await get(ref(db, 'users/' + uid));
-
-        const bought = uSnap.val()?.purchased || [];
-
+function loadItems() {
+    onValue(ref(db, 'products'), (snap) => {
         let h = '';
-
-        snap.forEach((c) => {
-
-            const p = c.val(); const pid = c.key;
-
-            const owns = bought.includes(pid) || p.price === 0;
-
+        const bought = userLocal?.purchased || [];
+        snap.forEach(child => {
+            const p = child.val();
+            const isOwned = bought.includes(child.key) || p.price === 0;
             h += `<div class="product-card">
-
-                <h3>${p.name}</h3>
-
-                ${owns ? `<button class="btn" style="background:#238636; color:white" onclick="viewMaterial('${p.link}', '${p.name}')">عرض المادة 👁️</button>` : 
-
-                `<button class="btn" style="background:var(--primary); color:white" onclick="buy('${pid}', ${p.price})">شراء (${p.price} LE)</button>`}
-
-                ${auth.currentUser.uid === ADMIN_ID ? `<button class="btn" style="background:red; color:white; font-size:10px" onclick="del('${pid}')">حذف 🗑️</button>` : ''}
-
+                <b>${p.name}</b>
+                ${isOwned ? `
+                    <div style="margin-top:10px;">
+                        ${p.imgLink ? `<img src="${p.imgLink}" style="width:100%; border-radius:10px; border:1px solid #333;">` : ''}
+                        ${p.audioLink ? `<audio autoplay controls style="width:100%; height:35px;"><source src="${p.audioLink}"></audio>` : ''}
+                        ${p.link ? `<button class="btn" style="background:var(--accent); color:white" onclick="window.open('${p.link}')">فتح</button>` : ''}
+                    </div>
+                ` : `<button class="btn" style="background:var(--primary); color:#fff" onclick="buy('${child.key}', ${p.price})">شراء (${p.price} LE)</button>`}
             </div>`;
-
         });
-
-        document.getElementById('products-list').innerHTML = h || '<p>لا. يوجد تسريبات حاليا..</p>';
-
+        document.getElementById('products-list').innerHTML = h;
     });
-
 }
 
-// عرض المادة في الـ Iframe
-
-window.viewMaterial = (link, name) => {
-
-    let finalLink = link.includes('drive.google.com') ? link.replace('/view', '/preview').split('?')[0] : link;
-
-    document.getElementById('viewer-title').innerText = name;
-
-    document.getElementById('viewer-frame').src = finalLink;
-
-    document.getElementById('viewer-overlay').style.display = 'flex';
-
-};
-
-window.closeViewer = () => {
-
-    document.getElementById('viewer-overlay').style.display = 'none';
-
-    document.getElementById('viewer-frame').src = "";
-
-};
-
 // عملية الشراء
-
 window.buy = async (pid, price) => {
-
-    const r = ref(db, 'users/' + auth.currentUser.uid);
-
-    const s = await get(r);
-
-    const bal = s.val()?.balance || 0;
-
-    if(bal >= price) {
-
-        const p = s.val()?.purchased || []; p.push(pid);
-
-        await update(r, { balance: increment(-price), purchased: p });
-
-        alert("تم الشراء!");
-
-    } else alert("رصيد لا يكفي");
-
+    if(userLocal.balance >= price) {
+        const p = userLocal.purchased || []; p.push(pid);
+        await update(ref(db, 'users/' + auth.currentUser.uid), { balance: increment(-price), purchased: p });
+        alert("تم فتح المادة بنجاح!");
+    } else alert("رصيدك خلص، اشحن بسرعة!");
 };
 
-// شحن رصيد (أدمن)
-
-window.adminCharge = async () => {
-
-    const id = document.getElementById('adm-u-uid').value;
-
-    const m = parseFloat(document.getElementById('adm-u-amt').value);
-
-    await update(ref(db, 'users/' + id), { balance: increment(m) });
-
-    alert("تم الشحن!");
-
+// إرسال الرسائل
+window.sendMsg = () => {
+    const txt = document.getElementById('chat-in').value;
+    if(txt) push(ref(db, 'chat'), { name: userLocal.name, text: txt, uid: auth.currentUser.uid, time: serverTimestamp() });
+    document.getElementById('chat-in').value = "";
 };
 
-// حذف منتج وتوثيق تسجيل الدخول
+// تحميل الدردشة
+function loadChat() {
+    onValue(ref(db, 'chat'), (s) => {
+        let h = '';
+        s.forEach(c => {
+            const m = c.val();
+            h += `<div class="msg ${m.uid===auth.currentUser.uid ? 'msg-me' : ''}"><b>${m.name}</b>${m.text}</div>`;
+        });
+        const b = document.getElementById('chat-msgs'); b.innerHTML = h; b.scrollTop = b.scrollHeight;
+    });
+}
 
-window.del = (id) => remove(ref(db, 'products/' + id));
+// نظام SOS
+window.activateSOS = () => { 
+    document.getElementById('main-ui').style.display='none'; 
+    document.getElementById('sos-screen').style.display='block'; 
+}
 
-window.handleAuth = (t) => {
-
-    const e = document.getElementById('login-email').value, p = document.getElementById('login-pass').value;
-
-    const f = t === 'login' ? signInWithEmailAndPassword : createUserWithEmailAndPassword;
-
-    f(auth, e, p).catch(err => alert(err.message));
-
+window.checkUnlock = async () => {
+    const snap = await get(ref(db, 'users/' + auth.currentUser.uid + '/sosCode'));
+    if (snap.exists() && document.getElementById('sos-unlock').value === snap.val()) {
+        document.getElementById('sos-screen').style.display='none';
+        document.getElementById('main-ui').style.display='block';
+    } else alert("لم يتم العثور على نتائج بحث.");
 };
 
-window.logout = () => signOut(auth);
+function loadSOS() {
+    onValue(ref(db, 'settings/fakeArticle'), (s) => {
+        if(s.exists()){
+            document.getElementById('fake-title').innerText = s.val().title;
+            document.getElementById('fake-body').innerText = s.val().content;
+        }
+    });
+}
+
+// التعامل مع الدخول والتسجيل
+window.handleAuth = async (type) => {
+    const email = (type==='signup' ? document.getElementById('reg-email').value : document.getElementById('login-email').value);
+    const pass = (type==='signup' ? document.getElementById('reg-pass').value : document.getElementById('login-pass').value);
+    try {
+        if(type === 'signup') {
+            const res = await createUserWithEmailAndPassword(auth, email, pass);
+            await set(ref(db, 'users/' + res.user.uid), { 
+                name: document.getElementById('user-nick').value, 
+                sosCode: document.getElementById('user-sos').value, 
+                balance: 0, 
+                purchased: [] 
+            });
+        } else await signInWithEmailAndPassword(auth, email, pass);
+    } catch(e) { alert(e.message); }
+};
