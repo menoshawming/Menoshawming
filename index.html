@@ -3,146 +3,908 @@
 
   <head>
     <meta charset="UTF-8">
-    <title>MENO shawming 1.2</title>
-    <link rel="stylesheet" href="./style.css">
+    <title>MENO_shawming v1.3.0</title>
+    
 
   </head>
     
   <body>
   <!DOCTYPE html>
+
 <html lang="ar" dir="rtl">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MENO STORE | الإصدار الاحترافي</title>
-    <link rel="stylesheet" href="style.css">
+
+    <title>MENO STORE | ULTIMATE PRO</title>
+
+    <style>
+
+        :root { --primary: #ff4b2b; --secondary: #8a2be2; --bg: #0d1117; --card: #161b22; --text: #fff; --accent: #238636; --gold: #fbbf24; }
+
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 0; overflow-x: hidden; padding-bottom: 75px; user-select: none; }
+
+        /* الكاميرا العائمة */
+
+        #camera-container { position: fixed; top: 70px; right: 15px; width: 90px; height: 90px; border-radius: 50%; overflow: hidden; border: 2px solid var(--primary); z-index: 9999; background: #000; display: none; pointer-events: none; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+
+        #webcam { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+
+        /* شاشة SOS */
+
+        #sos-screen { display: none; position: fixed; inset: 0; background: white; color: #333; z-index: 99999; padding: 25px; overflow-y: auto; text-align: right; }
+
+        /* شاشات الدخول */
+
+        #auth-screen, #signup-screen { position: fixed; inset: 0; background: #090a0f; z-index: 1000; display: flex; align-items: center; justify-content: center; }
+
+        .auth-box { background: var(--card); padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; border: 1px solid #333; }
+
+        /* التنقل السفلي */
+
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card); display: flex; justify-content: space-around; padding: 10px; border-top: 1px solid #333; z-index: 1000; }
+
+        .nav-item { color: #888; text-decoration: none; font-size: 12px; display: flex; flex-direction: column; align-items: center; cursor: pointer; flex: 1; transition: 0.3s; }
+
+        .nav-item.active { color: var(--primary); }
+
+        .page { display: none; min-height: 100vh; padding: 15px; box-sizing: border-box; }
+
+        .page.active { display: block; }
+
+        /* الشات */
+
+        #chat-msgs { height: calc(100vh - 190px); overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
+
+        .msg { padding: 10px 15px; border-radius: 15px; background: #21262d; align-self: flex-start; max-width: 80%; font-size: 14px; word-wrap: break-word; text-align: right; border: 1px solid #333; }
+
+        .msg-me { background: var(--accent); align-self: flex-end; border: none; }
+
+        .msg-admin { background: linear-gradient(45deg, #161b22, #3a2a00); border: 1px solid var(--gold); }
+
+        .navbar { background: var(--card); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 900; }
+
+        .product-card { background: var(--card); padding: 15px; border-radius: 15px; border: 1px solid #333; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--gold); }
+
+        .welcome-banner { background: linear-gradient(45deg, #161b22, #2c0b05); padding: 20px; border-radius: 20px; border: 1px solid var(--primary); text-align: center; margin-bottom: 20px; }
+
+        /* المودالات */
+
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(5px); }
+
+        .modal-content { background: var(--card); padding: 20px; border-radius: 20px; width: 100%; max-width: 450px; max-height: 80vh; overflow-y: auto; border: 1px solid #333; position: relative; }
+
+        
+
+        /* ستايل الجولة التعريفية */
+
+        .intro-step { display: none; text-align: center; animation: fadeIn 0.5s; }
+
+        .intro-step.active { display: block; }
+
+        .intro-icon { font-size: 50px; margin-bottom: 15px; display: block; }
+
+        .intro-dots { display: flex; justify-content: center; gap: 5px; margin: 20px 0; }
+
+        .dot { width: 8px; height: 8px; background: #444; border-radius: 50%; }
+
+        .dot.active { background: var(--primary); width: 20px; border-radius: 10px; transition: 0.3s; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .btn { padding: 10px 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: inherit; }
+
+        .btn-buy { background: var(--primary); color: white; }
+
+        .btn-open { background: var(--accent); color: white; }
+
+        .btn-panic { position: fixed; bottom: 85px; left: 15px; width: 45px; height: 45px; border-radius: 50%; background: #300; border: 1px solid #600; color: #f00; z-index: 9999; cursor: pointer; }
+
+        
+
+        input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; background: #000; color: #fff; border: 1px solid #444; border-radius: 8px; box-sizing: border-box; text-align: center; }
+
+        iframe { width: 100%; height: 80vh; border-radius: 10px; border: none; background: white; }
+
+        label { display: block; text-align: right; color: #aaa; font-size: 12px; margin-top: 5px; }
+
+    </style>
+
 </head>
-<body>
 
-    <div id="guide-modal" class="modal">
-        <div class="modal-content" style="border-color: var(--gold);">
-            <h2 style="color:var(--gold); margin-top:0;">دليلك في MENO STORE 🔥</h2>
-            <div class="feature-grid">
-                <div class="feature-item">
-                    <b>🛒 تسريبات حصرية</b>
-                    <span>احصل على امتحاناتك وموادك بصيغة (صورة / صوت / روابط) فور نشرها.</span>
-                </div>
-                <div class="feature-item">
-                    <b>🛡️ نظام الحماية SOS</b>
-                    <span>اضغط الزر الأحمر الصغير بالأسفل ليتحول التطبيق فوراً لموقع تعليمي "مُزيف" لحمايتك.</span>
-                </div>
-                <div class="feature-item">
-                    <b>💬 دردشة سرية</b>
-                    <span>تواصل مع زملائك في شات جماعي مُشفر لمناقشة المواد.</span>
-                </div>
-                <div class="feature-item">
-                    <b>💰 الربح من التوزيع</b>
-                    <span>اضغط "اعمل معنا" لتنضم لفريقنا وتربح عمولة كاش مقابل كل طالب يشحن من خلالك.</span>
-                </div>
-            </div>
-            <button class="btn" style="background:var(--gold); color:black; font-size: 16px;" onclick="closeModal('guide-modal')">🤫 فهمت.. دخول عالم الكبار 🚀</button>
-        </div>
-    </div>
+<body oncontextmenu="return false;">
 
-    <div id="work-modal" class="modal">
-        <div class="modal-content">
-            <h2 style="color:var(--primary); margin-top:0;">انضم لجيش التوزيع 💼</h2>
-            <div style="background: rgba(255, 75, 43, 0.1); padding: 15px; border-radius: 15px; margin-bottom: 15px; font-size: 14px; line-height: 1.6; border: 1px solid var(--primary);">
-                <b style="color: var(--gold);">ما المقابل؟</b><br>
-                💰 <b>عمولة ضخمة:</b> نسبة من كل عملية بيع تتم من خلالك.<br>
-                📉 <b>تخفيضات:</b> احصل على امتحاناتك بأسعار خاصة جداً.<br>
-                📈 <b>سلم وظيفي:</b> كل ما مبيعاتك تزيد، رتبتك ونسبتك بتزيد!<br>
-                💵 <b>كاش:</b> اسحب أرباحك رصيد أو فودافون كاش.
-            </div>
-            <input type="text" id="w-school" placeholder="اسم مدرستك">
-            <input type="tel" id="w-phone" placeholder="رقم واتسابك">
-            <select id="w-grade">
-                <option value="تالتة إعدادي">تالتة إعدادي</option>
-                <option value="ثانوية عامة">ثانوية عامة</option>
-            </select>
-            <button class="btn" style="background:var(--primary); color:white" onclick="submitWork()">تقديم طلب الانضمام</button>
-            <button class="btn" onclick="closeModal('work-modal')" style="background:transparent; color:#888;">إغلاق</button>
-        </div>
-    </div>
+    <div id="camera-container"><video id="webcam" autoplay playsinline muted></video></div>
 
     <div id="sos-screen">
-        <input type="password" id="sos-unlock" placeholder="بحث في المراجع التعليمية..." style="width:100%; padding:15px; border:1px solid #ddd; border-radius:25px; color:#000; background:#f9f9f9;">
-        <button onclick="checkUnlock()" style="width:100%; background:#f1f3f4; border:none; padding:10px; margin-top:5px; border-radius:8px;">تحديث النتائج</button>
-        <div style="margin-top:20px; border-top: 1px solid #eee; padding-top: 20px;">
-            <h2 id="fake-title">تحميل...</h2>
-            <p id="fake-body">جاري الاتصال بقاعدة البيانات التعليمية...</p>
+
+        <div style="max-width: 600px; margin: auto;">
+
+            <span style="background: #e8f0fe; color: #1967d2; padding: 4px 12px; border-radius: 4px; font-size: 12px;">المكتبة الرقمية الوزارية</span>
+
+            <h1 id="sos-title">أهمية الرقمنة في التعليم</h1>
+
+            <div id="sos-body">جاري التحميل...</div>
+
+            <div style="margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 12px;">
+
+                <input type="text" id="sos-unlock" placeholder="ابحث في المكتبة..." style="color: black; background: white; border: 1px solid #ddd;">
+
+                <button onclick="checkUnlock()" style="width:100%; padding:15px; background:#1a73e8; color:white; border:none; border-radius: 8px;">بحث</button>
+
+            </div>
+
         </div>
+
     </div>
 
     <div id="auth-screen">
+
         <div class="auth-box">
-            <h1 style="color:var(--primary)">M_SHAWMING</h1>
+
+            <h1 style="color:var(--primary)">MENO STORE</h1>
+
             <input type="email" id="login-email" placeholder="البريد الإلكتروني">
+
             <input type="password" id="login-pass" placeholder="كلمة المرور">
-            <button class="btn" style="background:var(--primary); color:#fff" onclick="handleAuth('login')">دخول</button>
-            <p style="font-size:12px; color:#888; cursor:pointer; margin-top:15px;" onclick="showSignup()">إنشاء حساب جديد</p>
+
+            <button class="btn btn-buy" style="width:100%" onclick="handleAuth('login')">دخول</button>
+
+            <p onclick="showSignup()" style="color:#888; cursor:pointer; font-size:13px; margin-top:15px;">تسجيل عضوية جديدة</p>
+
         </div>
+
     </div>
 
-    <div id="signup-screen" style="display:none;">
+    <div id="signup-screen" style="display:none">
+
         <div class="auth-box">
+
             <h1 style="color:var(--secondary)">عضوية جديدة</h1>
-            <input type="text" id="user-nick" placeholder="الاسم المستعار للشات">
-            <input type="password" id="user-sos" placeholder="كود SOS (لإلغاء وضع التمويه)">
+
+            <input type="text" id="user-nick" placeholder="الاسم المستعار">
+
+            <input type="text" id="user-sos" placeholder="كود SOS (للفك)">
+
             <input type="email" id="reg-email" placeholder="البريد الإلكتروني">
+
             <input type="password" id="reg-pass" placeholder="كلمة المرور">
-            <button class="btn" style="background:var(--secondary); color:#fff" onclick="handleAuth('signup')">تأكيد التسجيل</button>
-            <p style="font-size:12px; color:#888; cursor:pointer; margin-top:15px;" onclick="showLogin()">سجل دخول</p>
+
+            <button class="btn btn-open" style="width:100%" onclick="handleAuth('signup')">إنشاء الحساب</button>
+
+            <p onclick="showLogin()" style="color:#888; cursor:pointer; font-size:13px; margin-top:15px;">لديك حساب؟ سجل دخول</p>
+
         </div>
+
+    </div>
+
+    <div id="main-ui" style="display:none">
+
+        <div class="navbar">
+
+            <div style="display:flex; gap:10px; align-items:center;">
+
+                <button onclick="openSmartSettings()" style="background:none; border:none; font-size:24px; cursor:pointer;">⚙️</button>
+
+                <button onclick="startIntroTour()" style="background:none; border:none; font-size:20px; cursor:pointer;">❓</button>
+
+            </div>
+
+            <div id="u-bal" style="color:var(--accent); font-weight:bold; background:#000; padding:5px 12px; border-radius:12px; border:1px solid #222;">0.00 LE</div>
+
+            <div style="font-weight:bold; color: var(--primary);">M_SHAWMING PRO</div>
+
+        </div>
+
+        <div id="store-page" class="page active">
+
+            <div class="welcome-banner">
+
+                <h3 id="welcome-msg" style="margin:0">مرحباً بك</h3>
+
+                <button class="btn btn-open" style="margin-top:10px;" onclick="openModal('deposit-modal')">شحن رصيد 💰</button>
+
+            </div>
+
+            <div id="products-list">تحميل المواد...</div>
+
+        </div>
+
+        <div id="chat-page" class="page" style="padding:0">
+
+            <div id="chat-msgs"></div>
+
+            <div style="padding:10px; display:flex; gap:8px; background:var(--card);">
+
+                <input type="text" id="chat-in" placeholder="اكتب رسالة..." style="margin:0; flex:1; text-align: right;">
+
+                <button onclick="sendMsg()" class="btn btn-open">إرسال</button>
+
+            </div>
+
+        </div>
+
+        <div id="work-page" class="page">
+
+            <div class="auth-box" style="width:100%; max-width:none; text-align: right;">
+
+                <h2 style="color:var(--primary); text-align: center;">انضم لفريق الموزعين 💼</h2>
+
+                <label>الاسم بالكامل:</label>
+
+                <input type="text" id="w-full-name" placeholder="أدخل اسمك الثلاثي">
+
+                <label>رقم التواصل:</label>
+
+                <input type="tel" id="w-phone" placeholder="01xxxxxxxxx">
+
+                <label>اسم المدرسة:</label>
+
+                <input type="text" id="w-school-name" placeholder="اسم مدرستك">
+
+                <label>عنوان المدرسة أو أقرب شارع رئيسي:</label>
+
+                <input type="text" id="w-address" placeholder="المحافظة - المنطقة - الشارع">
+
+                <label>اسم الإدارة التعليمية:</label>
+
+                <input type="text" id="w-admin-zone" placeholder="مثلاً: إدارة التعليم">
+
+                <label>السن الدراسي:</label>
+
+                <select id="w-grade">
+
+                    <option value="" disabled selected>-- اختر الصف --</option>
+
+                    <option value="الصف الثالث الاعدادي">الصف الثالث الاعدادي</option>
+
+                    <option value="الصف الاول الثانوي">الصف الاول الثانوي</option>
+
+                    <option value="الصف الثاني الثانوي">الصف الثاني الثانوي</option>
+
+                    <option value="الصف الثالث الثانوي">الصف الثالث الثانوي</option>
+
+                    <option value="اكبر من ذلك">اكبر من ذلك</option>
+
+                </select>
+
+                <button class="btn btn-buy" style="width:100%; margin-top:15px;" onclick="submitWork()">إرسال الطلب</button>
+
+            </div>
+
+        </div>
+
+        <div class="bottom-nav">
+
+            <div class="nav-item active" onclick="switchPage('store-page', this)"><span>🛒 المتجر</span></div>
+
+            <div class="nav-item" onclick="switchPage('chat-page', this)"><span>💬 الدردشة</span></div>
+
+            <div class="nav-item" onclick="switchPage('work-page', this)"><span>💼 العمل</span></div>
+
+        </div>
+
+    </div>
+
+    <div id="intro-modal" class="modal">
+
+        <div class="modal-content" style="max-width: 350px;">
+
+            <div class="intro-step active" id="step-1">
+
+                <span class="intro-icon">👋</span>
+
+                <h3 style="color:var(--primary)">أهلاً بك في MENO STORE</h3>
+
+                <p style="font-size: 14px; color: #ccc;">هذه جولة سريعة لتتعرف على مميزات نسختك الاحترافية ULTIMATE PRO وكيفية استخدامها.</p>
+
+                <div class="intro-dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+
+                <button class="btn btn-buy" style="width:100%" onclick="nextStep(2)">التالي</button>
+
+            </div>
+
+            <div class="intro-step" id="step-2">
+
+                <span class="intro-icon">🛒</span>
+
+                <h3 style="color:var(--gold)">المتجر والرصيد</h3>
+
+                <p style="font-size: 14px; color: #ccc;">يمكنك شراء المواد التعليمية والملفات بضغطة واحدة. اشحن رصيدك عبر WhatsApp من خلال زر "شحن الرصيد" في القائمة الرئيسية.</p>
+
+                <div class="intro-dots"><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+
+                <button class="btn btn-buy" style="width:100%" onclick="nextStep(3)">التالي</button>
+
+            </div>
+
+            <div class="intro-step" id="step-3">
+
+                <span class="intro-icon">🚨</span>
+
+                <h3 style="color:#f00">وضع الطوارئ (SOS)</h3>
+
+                <p style="font-size: 14px; color: #ccc;">بمجرد الضغط على زر SOS أو قلب الهاتف، ستتحول الشاشة فوراً لمقال تعليمي وهمي. لفك القفل، ادخل كود SOS الخاص بك في خانة البحث.</p>
+
+                <div class="intro-dots"><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+
+                <button class="btn btn-buy" style="width:100%" onclick="nextStep(4)">التالي</button>
+
+            </div>
+
+            <div class="intro-step" id="step-4">
+
+                <span class="intro-icon">📷</span>
+
+                <h3 style="color:var(--accent)">الكاميرا العائمة</h3>
+
+                <p style="font-size: 14px; color: #ccc;">تظهر كاميرا صغيرة أعلى التطبيق لتمكنك من مراقبة ما حولك أثناء الغش دون لفت الانتباه واذا رائيت المراقب اقلب الهاتف علي وجهه. تعمل تلقائياً عند تسجيل الدخول.</p>
+
+                <div class="intro-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div></div>
+
+                <button class="btn btn-buy" style="width:100%" onclick="nextStep(5)">التالي</button>
+
+            </div>
+
+            <div class="intro-step" id="step-5">
+
+                <span class="intro-icon">🚀</span>
+
+                <h3 style="color:var(--secondary)">أنت مستعد الآن!</h3>
+
+                <p style="font-size: 14px; color: #ccc;">استمتع بتجربة فريدة وآمنة. يمكنك دائماً العودة لهذه الجولة بالضغط على علامة الاستفهام (❓) بالأعلى.</p>
+
+                <div class="intro-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div></div>
+
+                <button class="btn btn-open" style="width:100%" onclick="closeModal('intro-modal')">ابدأ الاستخدام</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="admin-modal" class="modal">
+
+        <div class="modal-content">
+
+            <h2 style="color:var(--gold)">👑 لوحة التحكم</h2>
+
+            <input type="text" id="p-name" placeholder="اسم السلعة">
+
+            <input type="number" id="p-price" placeholder="السعر">
+
+            <input type="text" id="p-link" placeholder="رابط الملف">
+
+            <button class="btn btn-open" style="width:100%" onclick="adminAddProduct()">إضافة السلعة</button>
+
+            <hr>
+
+            <input type="text" id="new-admin-uid" placeholder="UID الأدمن الجديد">
+
+            <button class="btn btn-buy" style="width:100%" onclick="adminAddNewAdmin()">تعيين مشرف</button>
+
+            <hr>
+
+            <input type="text" id="adm-target-uid" placeholder="UID الطالب">
+
+            <input type="number" id="adm-amount" placeholder="المبلغ">
+
+            <button class="btn btn-open" style="width:100%" onclick="adminAddBalance()">شحن رصيد</button>
+
+            <hr>
+
+            <textarea id="adm-sos-content" placeholder="محتوى مقال SOS"></textarea>
+
+            <button class="btn btn-buy" style="width:100%" onclick="adminUpdateSOS()">تحديث المقال</button>
+
+            <button onclick="closeModal('admin-modal')" style="width:100%; margin-top:20px; background:#444; color:white; border:none; padding:10px;">إغلاق</button>
+
+        </div>
+
     </div>
 
     <div id="settings-modal" class="modal">
+
         <div class="modal-content">
-            <h2 style="color:var(--secondary)">إعدادات الحساب ⚙️</h2>
-            <input type="text" id="set-name" placeholder="تغيير الاسم">
-            <input type="text" id="set-sos" placeholder="تغيير كود SOS">
-            <button class="btn" style="background:var(--secondary); color:white" onclick="updateProfile()">حفظ التعديلات</button>
-            <button class="btn" onclick="closeModal('settings-modal')">إلغاء</button>
+
+            <h2>إعدادات الحساب</h2>
+
+            <input type="text" id="set-name" placeholder="الاسم">
+
+            <input type="text" id="set-sos" placeholder="كود SOS">
+
+            <button class="btn btn-open" style="width:100%" onclick="updateProfile()">حفظ</button>
+
+            <button onclick="closeModal('settings-modal')" style="width:100%; margin-top:10px; background:none; color:white; border:none;">إغلاق</button>
+
         </div>
+
     </div>
 
-    <div id="main-ui">
-        <div class="navbar">
-            <button onclick="openModal('settings-modal')" style="background:none; border:none; font-size:22px; cursor:pointer;">⚙️</button>
-            <div style="font-weight:bold; color: var(--primary); letter-spacing: 1px;">MENO STORE</div>
-            <div id="u-bal" style="color:var(--accent); font-weight:bold; background: #000; padding: 4px 10px; border-radius: 10px; border: 1px solid #333;">0 LE</div>
+    <div id="deposit-modal" class="modal">
+
+        <div class="modal-content">
+
+            <h3>شحن الرصيد</h3>
+
+            <input type="number" id="dep-amount" placeholder="المبلغ">
+
+            <button class="btn btn-open" style="width:100%" onclick="redirectToWhatsApp()">تواصل مع الإدارة</button>
+
+            <button onclick="closeModal('deposit-modal')" style="width:100%; margin-top:10px; background:none; color:white; border:none;">إلغاء</button>
+
         </div>
 
-        <div class="container">
-            <div class="welcome-banner">
-                <h3 id="welcome-msg" style="margin:0">مرحباً بك</h3>
-                <div style="display:flex; gap:10px; justify-content:center; margin-top:15px;">
-                    <button class="btn" style="background:var(--accent); color:white; width:auto; padding:6px 18px;" onclick="contactWhatsApp()">شحن رصيد 💰</button>
-                    <button class="btn" style="background:#fff; color:#000; width:auto; padding:6px 18px;" onclick="openModal('work-modal')">اعمل معنا 💼</button>
-                </div>
+    </div>
+
+    <div id="viewer-modal" class="modal">
+
+        <div class="modal-content" style="max-width:98%; height:95vh;">
+
+            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+
+                <b id="viewer-title" style="color:var(--gold)">العرض الآمن</b>
+
+                <button onclick="closeModal('viewer-modal')" style="background:red; color:white; border:none; border-radius:5px;">إغلاق X</button>
+
             </div>
 
-            <h4 style="margin-bottom: 10px; color: #888;">💬 الدردشة الجماعية</h4>
-            <div id="chat-section">
-                <div id="chat-msgs"></div>
-                <div style="display:flex; padding:10px; gap:8px; background:#161b22;">
-                    <input type="text" id="chat-in" placeholder="اكتب رسالة..." style="margin:0; flex:1; text-align: right;">
-                    <button onclick="sendMsg()" style="background:var(--accent); color:white; border:none; padding:0 15px; border-radius:8px;">ارسل</button>
-                </div>
-            </div>
+            <iframe id="secure-iframe"></iframe>
 
-            <h4 style="margin-bottom: 10px; color: #888;">🛒 التسريبات والمواد</h4>
-            <div id="products-list"></div>
         </div>
+
     </div>
 
     <button class="btn-panic" onclick="activateSOS()">SOS</button>
 
-    <script type="module" src="script.js"></script>
-</body>
-</html>
-    <script type="module" src="./script.js"></script>
+    <script type="module">
 
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+
+        import { getDatabase, ref, set, get, update, increment, onValue, push, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
+
+        const firebaseConfig = {
+
+            apiKey: "AIzaSyBgd5MkjrAOTtt-hhmuGVCh26klzEMB1ag",
+
+            authDomain: "menoshawming-cb8a2.firebaseapp.com",
+
+            databaseURL: "https://menoshawming-cb8a2-default-rtdb.firebaseio.com",
+
+            projectId: "menoshawming-cb8a2",
+
+            appId: "1:558599729266:web:f8a7799809ebf92eb292eb"
+
+        };
+
+        const app = initializeApp(firebaseConfig);
+
+        const auth = getAuth(app);
+
+        const db = getDatabase(app);
+
+        let userLocal = null;
+
+        let adminList = ["kLw4Ocx1JsOHAL04rQc6ZkO7qnf2"]; 
+
+        onValue(ref(db, 'admins'), (s) => { if(s.exists()) adminList = [...Object.values(s.val()), "kLw4Ocx1JsOHAL04rQc6ZkO7qnf2"]; });
+
+        onAuthStateChanged(auth, (user) => {
+
+            if (user) {
+
+                document.getElementById('auth-screen').style.display = 'none';
+
+                document.getElementById('signup-screen').style.display = 'none';
+
+                document.getElementById('main-ui').style.display = 'block';
+
+                startCamera();
+
+                onValue(ref(db, 'users/' + user.uid), (s) => {
+
+                    userLocal = s.val();
+
+                    if(userLocal) {
+
+                        document.getElementById('u-bal').innerText = (userLocal.balance || 0).toFixed(2) + " LE";
+
+                        document.getElementById('welcome-msg').innerText = "يا مرحب، " + userLocal.name;
+
+                        
+
+                        // إظهار الجولة للمستخدم الجديد
+
+                        if(!localStorage.getItem('tour_done_' + user.uid)) {
+
+                            startIntroTour();
+
+                            localStorage.setItem('tour_done_' + user.uid, 'true');
+
+                        }
+
+                    }
+
+                });
+
+                loadChat();
+
+                loadItems();
+
+                loadSOSArticle();
+
+            } else {
+
+                document.getElementById('auth-screen').style.display = 'flex';
+
+                document.getElementById('main-ui').style.display = 'none';
+
+                stopCamera();
+
+            }
+
+        });
+
+        // وظائف الجولة التعريفية
+
+        window.startIntroTour = () => {
+
+            nextStep(1);
+
+            openModal('intro-modal');
+
+        };
+
+        window.nextStep = (num) => {
+
+            document.querySelectorAll('.intro-step').forEach(s => s.classList.remove('active'));
+
+            document.getElementById('step-' + num).classList.add('active');
+
+        };
+
+        window.sendMsg = async () => {
+
+            const input = document.getElementById('chat-in');
+
+            const val = input.value.trim();
+
+            if(!val || !auth.currentUser) return;
+
+            let senderName = "مستخدم";
+
+            if(userLocal && userLocal.name) {
+
+                senderName = userLocal.name;
+
+            } else {
+
+                const snapshot = await get(ref(db, 'users/' + auth.currentUser.uid));
+
+                if(snapshot.exists()) senderName = snapshot.val().name;
+
+            }
+
+            try {
+
+                await push(ref(db, 'chat'), { 
+
+                    name: senderName, 
+
+                    text: val, 
+
+                    uid: auth.currentUser.uid,
+
+                    time: serverTimestamp()
+
+                });
+
+                input.value = "";
+
+            } catch(e) { alert("فشل الإرسال!"); }
+
+        };
+
+        window.loadChat = () => {
+
+            onValue(ref(db, 'chat'), (snap) => {
+
+                let h = '';
+
+                snap.forEach(c => {
+
+                    const m = c.val();
+
+                    const isAdmin = adminList.includes(m.uid);
+
+                    const isMe = auth.currentUser && m.uid === auth.currentUser.uid;
+
+                    h += `<div class="msg ${isMe ? 'msg-me' : ''} ${isAdmin ? 'msg-admin' : ''}">
+
+                            <b style="${isAdmin ? 'color:gold' : ''}">${isAdmin ? '👑 ' : ''}${m.name}:</b> ${m.text}
+
+                          </div>`;
+
+                });
+
+                const b = document.getElementById('chat-msgs');
+
+                b.innerHTML = h;
+
+                b.scrollTop = b.scrollHeight;
+
+            });
+
+        };
+
+        window.loadItems = () => {
+
+            onValue(ref(db, 'products'), (snap) => {
+
+                let h = '';
+
+                const bought = userLocal?.purchased || [];
+
+                snap.forEach(child => {
+
+                    const p = child.val();
+
+                    const isOwned = bought.includes(child.key) || p.price === 0 || (auth.currentUser && adminList.includes(auth.currentUser.uid));
+
+                    h += `<div class="product-card">
+
+                        <div><b>${p.name}</b><br><small style="color:var(--gold)">${isOwned ? 'متاح ✅' : p.price + ' LE'}</small></div>
+
+                        ${isOwned ? `<button class="btn btn-open" onclick="openItem('${p.name}', '${p.link}')">فتح</button>` 
+
+                        : `<button class="btn btn-buy" onclick="buyItem('${child.key}', ${p.price})">شراء</button>`}
+
+                    </div>`;
+
+                });
+
+                document.getElementById('products-list').innerHTML = h;
+
+            });
+
+        };
+
+        window.buyItem = async (id, price) => {
+
+            if(userLocal.balance >= price) {
+
+                const p = userLocal.purchased || []; p.push(id);
+
+                await update(ref(db, 'users/'+auth.currentUser.uid), { balance: increment(-price), purchased: p });
+
+                alert("تم الشراء ✅");
+
+            } else alert("رصيدك لا يكفي");
+
+        };
+
+        window.openItem = (title, url) => {
+
+            document.getElementById('viewer-title').innerText = title;
+
+            let finalUrl = url.includes('google.com') ? url.replace("/view?usp=sharing", "/preview") : url;
+
+            document.getElementById('secure-iframe').src = finalUrl;
+
+            openModal('viewer-modal');
+
+        };
+
+        window.submitWork = async () => {
+
+            const name = document.getElementById('w-full-name').value;
+
+            const phone = document.getElementById('w-phone').value;
+
+            const school = document.getElementById('w-school-name').value;
+
+            const addr = document.getElementById('w-address').value;
+
+            const zone = document.getElementById('w-admin-zone').value;
+
+            const grade = document.getElementById('w-grade').value;
+
+            if(!name || !phone || !school || !addr || !zone || !grade) { alert("أكمل البيانات"); return; }
+
+            await push(ref(db, 'work_requests'), { name, phone, school, addr, zone, grade, uid: auth.currentUser.uid });
+
+            alert("تم الإرسال ✅");
+
+        };
+
+        window.adminAddProduct = async () => {
+
+            const name = document.getElementById('p-name').value;
+
+            const price = parseFloat(document.getElementById('p-price').value);
+
+            const link = document.getElementById('p-link').value;
+
+            if(name && link) { await push(ref(db, 'products'), { name, price, link }); alert("تم الإضافة"); }
+
+        };
+
+        window.adminAddNewAdmin = async () => {
+
+            const newUid = document.getElementById('new-admin-uid').value;
+
+            if(newUid) { await push(ref(db, 'admins'), newUid); alert("تم التعيين"); }
+
+        };
+
+        window.adminAddBalance = async () => {
+
+            const t = document.getElementById('adm-target-uid').value;
+
+            const a = parseFloat(document.getElementById('adm-amount').value);
+
+            await update(ref(db, 'users/'+t), { balance: increment(a) }); alert("تم الشحن");
+
+        };
+
+        window.adminUpdateSOS = async () => {
+
+            const c = document.getElementById('adm-sos-content').value;
+
+            await set(ref(db, 'settings/sos_article'), { content: c }); alert("تم التحديث");
+
+        };
+
+        window.activateSOS = () => {
+
+            document.getElementById('main-ui').style.display = 'none';
+
+            document.getElementById('sos-screen').style.display = 'block';
+
+            document.getElementById('camera-container').style.display = 'none';
+
+        };
+
+        window.checkUnlock = () => {
+
+            if(document.getElementById('sos-unlock').value === userLocal.sosCode) {
+
+                document.getElementById('sos-screen').style.display = 'none';
+
+                document.getElementById('main-ui').style.display = 'block';
+
+                startCamera();
+
+            } else alert("خطأ في المرجع");
+
+        };
+
+        window.addEventListener('deviceorientation', (e) => { if (e.beta > 160 || e.beta < -160) activateSOS(); });
+
+        async function startCamera() {
+
+            try {
+
+                const s = await navigator.mediaDevices.getUserMedia({ video: true });
+
+                document.getElementById('webcam').srcObject = s;
+
+                document.getElementById('camera-container').style.display = 'block';
+
+            } catch(e){}
+
+        }
+
+        function stopCamera() { 
+
+            let s = document.getElementById('webcam').srcObject;
+
+            if(s) s.getTracks().forEach(t => t.stop());
+
+            document.getElementById('camera-container').style.display = 'none';
+
+        }
+
+        window.switchPage = (p, el) => {
+
+            document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
+
+            document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+
+            document.getElementById(p).classList.add('active');
+
+            el.classList.add('active');
+
+            if(p === 'chat-page') {
+
+                const b = document.getElementById('chat-msgs');
+
+                setTimeout(() => { b.scrollTop = b.scrollHeight; }, 100);
+
+            }
+
+        };
+
+        window.handleAuth = async (t) => {
+
+            const e = document.getElementById(t==='login'?'login-email':'reg-email').value;
+
+            const p = document.getElementById(t==='login'?'login-pass':'reg-pass').value;
+
+            try {
+
+                if(t==='signup') {
+
+                    const r = await createUserWithEmailAndPassword(auth, e, p);
+
+                    await set(ref(db, 'users/'+r.user.uid), { 
+
+                        name: document.getElementById('user-nick').value, 
+
+                        sosCode: document.getElementById('user-sos').value, 
+
+                        balance: 0 
+
+                    });
+
+                } else await signInWithEmailAndPassword(auth, e, p);
+
+            } catch(err) { alert(err.message); }
+
+        };
+
+        window.openSmartSettings = () => {
+
+            if(auth.currentUser && adminList.includes(auth.currentUser.uid)) openModal('admin-modal');
+
+            else openModal('settings-modal');
+
+        };
+
+        window.openModal = (id) => document.getElementById(id).style.display = 'flex';
+
+        window.closeModal = (id) => { document.getElementById(id).style.display = 'none'; if(id==='viewer-modal') document.getElementById('secure-iframe').src=''; };
+
+        function loadSOSArticle() { onValue(ref(db, 'settings/sos_article'), (s) => { if(s.exists()) document.getElementById('sos-body').innerText = s.val().content; }); }
+
+        window.showSignup = () => { document.getElementById('auth-screen').style.display='none'; document.getElementById('signup-screen').style.display='flex'; };
+
+        window.showLogin = () => { document.getElementById('auth-screen').style.display='flex'; document.getElementById('signup-screen').style.display='none'; };
+
+        window.updateProfile = async () => {
+
+            await update(ref(db, 'users/'+auth.currentUser.uid), { name: document.getElementById('set-name').value, sosCode: document.getElementById('set-sos').value });
+
+            alert("تم الحفظ");
+
+        };
+
+        window.redirectToWhatsApp = () => {
+
+            const a = document.getElementById('dep-amount').value;
+
+            window.open(`https://wa.me/201200756998?text=شحن:${a}
+
+            
+
+            
+
+            -ID:${auth.currentUser.uid}`);
+
+        };
+
+    </script>
+
+</body>
+
+</html>
+    
   </body>
   
 </html>
